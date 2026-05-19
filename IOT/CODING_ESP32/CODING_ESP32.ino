@@ -2,54 +2,23 @@
 // MASUKKAN 3 BARIS KODE DARI BLYNK KAMU DI SINI (GANTI ISI TANDA PETIKNYA)
 // =========================================================================
 #define BLYNK_TEMPLATE_ID   "TMPL6erUr8cix"
-#define BLYNK_TEMPLATE_NAME "KELOMPOK 4"
+#define BLYNK_TEMPLATE_NAME "percobaan"
 #define BLYNK_AUTH_TOKEN    "zroRNRwKtML1EdmKJqFDCJ_iVvtDppJ4"
 
 #define BLYNK_PRINT Serial
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <BlynkSimpleEsp32.h>
-#include <DHT.h> // Library untuk Sensor DHT
 
 // Definisi Pin ESP32 sesuai rangkaianmu
 const int pinLED1 = 22;
 const int pinLED2 = 23;
-const int pinLED3 = 18;
 const int pinBuzzer = 19;
-
-#define DHTPIN 25     // Pin data DHT22 disambung ke GPIO 25 ESP32
-#define DHTTYPE DHT22 // Tipe sensor pakai DHT22 untuk Wokwi
-
-DHT dht(DHTPIN, DHTTYPE);
-BlynkTimer timer; // Timer agar pengiriman data ke Blynk teratur (tiap 2 detik) dan tidak spam
 
 // Informasi Wi-Fi khusus untuk Simulasi Wokwi
 char auth[] = BLYNK_AUTH_TOKEN;
 char ssid[] = "realme C11"; // Tetap gunakan ini agar terhubung ke internet Wokwi
 char pass[] = "pandu123";            // Kosongkan untuk simulasi Wokwi
-
-// Fungsi untuk membaca DHT22 dan kirim ke Blynk
-void sendSensorData() {
-  float h = dht.readHumidity();
-  float t = dht.readTemperature(); // Membaca suhu dalam Celcius
-
-  // Proteksi jika sensor gagal terbaca atau putus kabel di Wokwi
-  if (isnan(h) || isnan(t)) {
-    Serial.println("Gagal membaca dari sensor DHT22!");
-    return;
-  }
-
-  // Tampilkan data di Serial Monitor Wokwi
-  Serial.print("Suhu: ");
-  Serial.print(t);
-  Serial.print(" *C | Kelembaban: ");
-  Serial.print(h);
-  Serial.println(" %");
-
-  // Kirim data ke Virtual Pin Blynk baru
-  Blynk.virtualWrite(V5, t); // Kirim data suhu ke V5
-  Blynk.virtualWrite(V6, h); // Kirim data kelembaban ke V6
-}
 
 // Fungsi Blynk untuk mengontrol LED 1 dari Virtual Pin V1
 BLYNK_WRITE(V1) {
@@ -69,31 +38,18 @@ BLYNK_WRITE(V3) {
   digitalWrite(pinBuzzer, value);
 }
 
-// Fungsi Blynk untuk mengontrol LED 3 dari Virtual Pin V4
-BLYNK_WRITE(V4) {
-  int value = param.asInt();
-  digitalWrite(pinLED3, value);
-}
-
 void setup() {
   Serial.begin(115200);
   
   // Atur pin-pin sebagai OUTPUT
   pinMode(pinLED1, OUTPUT);
   pinMode(pinLED2, OUTPUT);
-  pinMode(pinLED3, OUTPUT);
   pinMode(pinBuzzer, OUTPUT);
-  
-  dht.begin(); // Mengaktifkan sensor DHT22
   
   // Memulai koneksi ke Blynk menggunakan jaringan virtual Wokwi
   Blynk.begin(auth, ssid, pass);
-
-  // Set timer agar fungsi sendSensorData otomatis jalan tiap 2000ms (2 detik)
-  timer.setInterval(2000L, sendSensorData);
 }
 
 void loop() {
   Blynk.run();
-  timer.run(); // Menjalankan timer Blynk secara terus-menerus
 }

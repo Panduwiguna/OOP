@@ -1,10 +1,10 @@
 #Greenfoot project file
 class.Spider.image=spider.png
 class.animal.image=turtle2.png
-editor.fx.0.height=26
-editor.fx.0.width=158
-editor.fx.0.x=-21333
-editor.fx.0.y=-21333
+editor.fx.0.height=0
+editor.fx.0.width=0
+editor.fx.0.x=0
+editor.fx.0.y=0
 height=686
 package.numDependencies=0
 package.numTargets=2
